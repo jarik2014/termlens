@@ -26,20 +26,28 @@
 #
 # The other half is a URL naming no in-repo path at all: #351 shipped
 # `…/vyncint/temlens/…` (one letter short) into `CONTRIBUTING.md` and all
-# sixteen checks reported success. The org is asserted against the list below
-# rather than asked over the network, deliberately: a link checker that asks
-# GitHub is online, flaky, and can report a 200 for the wrong reason, which is
-# the failure mode this script exists to avoid. `temlens` is not in the list.
+# sixteen checks reported success. The account is asserted against the list
+# below rather than asked over the network, deliberately: a link checker that
+# asks GitHub is online, flaky, and can report a 200 for the wrong reason,
+# which is the failure mode this script exists to avoid. `temlens` is not in
+# the list.
 #
 # Usage: check-readme-links.sh [file ...]   (default: README.md)
 set -euo pipefail
 
 base="https://github.com/vyncint/termlens/blob/main/"
 
-# Repositories that exist in the vyncint org: the four that share this
-# contributor pattern. A `github.com/vyncint/<anything else>` link is a typo or
-# a repository that moved, and either way it is a dead end for a reader.
-known_repos="launchbound mossaic reconverge termlens"
+# The repositories a document here has any business linking: the six projects
+# that share this contributor pattern, plus termlens's own demo, which
+# `docs/DESIGN.md` cites for the coverage study. The account holds many more
+# repositories than these; the list is deliberately the short one, because a
+# list of everything would wave through the typo this gate exists to catch.
+#
+# So a name outside it is *usually* a typo, and occasionally a real repository
+# nobody has linked before -- which is why the message below says the list is
+# what failed, rather than claiming the repository does not exist. Adding one
+# is a word.
+known_repos="launchbound mossaic oxidelake oxmera reconverge termlens termlens-demo"
 
 files=("$@")
 if [ "${#files[@]}" -eq 0 ]; then
@@ -90,7 +98,9 @@ for file in "${files[@]}"; do
               fi
             done
             if [ "$known" = no ]; then
-              echo "$file LINK: github.com/vyncint/$repo names no repository in the org" >&2
+              echo "$file LINK: github.com/vyncint/$repo is not a repository this gate knows" >&2
+              echo "  If the link is a typo, fix it. If the repository is real and newly" >&2
+              echo "  linked, add it to known_repos in $(basename "$0")." >&2
               status=1
             fi
             ;;
