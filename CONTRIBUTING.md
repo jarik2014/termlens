@@ -48,6 +48,7 @@ cargo test -p termlens --no-default-features --features serde
 cargo test --workspace                                   # default features
 cargo build -p termlens-cli                              # then the CLI's documented exit codes:
 .github/scripts/check-cli-contract.sh target/debug/termlens
+.github/scripts/check-readme-links.sh README.md CONTRIBUTING.md   # every in-repo link target exists; README.md alone may not use relative ones
 RUSTDOCFLAGS='-D warnings' cargo doc --no-deps
 RUSTDOCFLAGS='-D warnings' cargo doc --no-deps --all-features
 .github/scripts/check-candidate-statement.sh              # README, CHANGELOG and STABILITY state the candidate in the same words
@@ -58,6 +59,7 @@ cargo +1.85 check -p termlens --all-features --all-targets --locked           # 
 cargo +1.85 check -p termlens --no-default-features --all-targets --locked
 cargo clippy --workspace --all-targets --all-features --target x86_64-pc-windows-msvc -- -D warnings   # the Windows build, from any host: `rustup target add x86_64-pc-windows-msvc` once
 tools/semver-gate-selftest/run.sh                       # the semver gate can fail (cargo install cargo-semver-checks)…
+tools/link-gate-selftest/run.sh                         # …and so can the link gate, with no extra tooling
 .github/scripts/check-semver.sh 0.11.0                  # …and the public API is compatible with the last published release
 ```
 

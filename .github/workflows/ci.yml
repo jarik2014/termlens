@@ -78,7 +78,11 @@ jobs:
       # a relative link against crates/termlens/ rather than the repo root.
       # Every relative link on the 0.10.2 page was a 404 and nothing here
       # could see it, because the same file renders correctly on GitHub.
-      - run: .github/scripts/check-readme-links.sh
+      # CONTRIBUTING is the file a first-time contributor reads, and it is the
+      # one most likely to accumulate link rot — it points at scripts and
+      # workflows that get renamed. It is not packaged, so it may keep its
+      # relative links; what it may not keep is a target that is gone (#352).
+      - run: .github/scripts/check-readme-links.sh README.md CONTRIBUTING.md
       # The screens of whatever failed, in the step summary (#251). The
       # suite dogfoods the action with the CLI from this tree.
       - uses: ./.github/actions/report
@@ -178,6 +182,10 @@ jobs:
         with:
           persist-credentials: false
       - run: .github/scripts/check-ci-gates-listed.sh
+      # Proves the link gate can fail before it is trusted to pass (#352): a
+      # misspelled org repository and a deleted in-repo target are both
+      # asserted to go red, so today's green run means something.
+      - run: tools/link-gate-selftest/run.sh
 
   msrv:
     name: msrv
